@@ -231,14 +231,21 @@ class BestClick(ctk.CTk):
         self.configure(fg_color=self.C["app_bg"])
         self.protocol("WM_DELETE_WINDOW", self._on_close)
 
-        # App icon — deferred so tkinter doesn't override it after init
+        # App icon — must be deferred; customtkinter overrides icons set during __init__
         if os.path.exists(ICON_FILE):
-            self.after(0, lambda: self.iconbitmap(ICON_FILE))
+            self.after(250, self._apply_icon)
 
         # Center on screen
         self.update_idletasks()
         sw, sh = self.winfo_screenwidth(), self.winfo_screenheight()
         self.geometry(f"470x720+{(sw-470)//2}+{(sh-720)//2}")
+
+    def _apply_icon(self) -> None:
+        try:
+            self.iconbitmap(ICON_FILE)
+            self.wm_iconbitmap(ICON_FILE)
+        except Exception:
+            pass
 
     # ── theme switch  (destroys + rebuilds all UI widgets) ────────────────────
 
