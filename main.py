@@ -23,7 +23,7 @@ SUBTITLE  = "by @nummersechs  ·  bismillah"
 VERSION   = "1.0.0"
 
 ctk.set_appearance_mode("dark")
-ctk.set_default_color_theme("blue")
+ctk.set_default_color_theme("green")
 
 CONFIG_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "config.json")
 
@@ -221,7 +221,7 @@ class BestClick(ctk.CTk):
             left,
             text="⚡  BestClick",
             font=ctk.CTkFont("Segoe UI", 22, "bold"),
-            text_color="#58a6ff",
+            text_color="#4ade80",
             anchor="w",
         ).pack(anchor="w")
 
@@ -272,7 +272,7 @@ class BestClick(ctk.CTk):
         self._frames[tab_id].pack(fill="both", expand=True)
         for tid, btn in self._nav_btns.items():
             if tid == tab_id:
-                btn.configure(fg_color="#58a6ff", text_color="white")
+                btn.configure(fg_color="#4ade80", text_color="white")
             else:
                 btn.configure(fg_color="transparent", text_color="#8b949e")
 
@@ -285,7 +285,7 @@ class BestClick(ctk.CTk):
             row,
             text=title.upper(),
             font=ctk.CTkFont(size=9, weight="bold"),
-            text_color="#58a6ff",
+            text_color="#4ade80",
         ).pack(side="left")
         ctk.CTkFrame(row, fg_color="#21262d", height=1).pack(
             side="left", fill="x", expand=True, padx=(8, 0), pady=5
@@ -334,14 +334,14 @@ class BestClick(ctk.CTk):
                 value=val,
                 font=ctk.CTkFont(size=12),
                 text_color="#c9d1d9",
-                fg_color="#58a6ff",
-                hover_color="#79b8ff",
+                fg_color="#4ade80",
+                hover_color="#86efac",
                 command=self._on_type_change,
             ).grid(row=i // 2, column=i % 2, sticky="w", padx=8, pady=4)
 
         self._key_hint = ctk.CTkLabel(
             type_card, text="",
-            font=ctk.CTkFont(size=10), text_color="#58a6ff",
+            font=ctk.CTkFont(size=10), text_color="#4ade80",
         )
         self._key_hint.pack(padx=14, pady=(0, 8))
         self._on_type_change()
@@ -392,8 +392,8 @@ class BestClick(ctk.CTk):
             variable=self._infinite,
             font=ctk.CTkFont(size=12),
             text_color="#c9d1d9",
-            fg_color="#58a6ff",
-            hover_color="#79b8ff",
+            fg_color="#4ade80",
+            hover_color="#86efac",
             command=self._on_infinite,
         ).pack(side="left", padx=(0, 14))
 
@@ -450,7 +450,7 @@ class BestClick(ctk.CTk):
             counter,
             textvariable=self._count_var,
             font=ctk.CTkFont(size=22, weight="bold"),
-            text_color="#58a6ff",
+            text_color="#4ade80",
         ).pack(padx=14, pady=(0, 6))
 
         # ── Controls ──────────────────────────────────────────────────────────
@@ -553,7 +553,7 @@ class BestClick(ctk.CTk):
             text="💾  Save Keybinds",
             height=46,
             font=ctk.CTkFont(size=13, weight="bold"),
-            fg_color="#58a6ff", hover_color="#79b8ff",
+            fg_color="#4ade80", hover_color="#86efac",
             text_color="white", corner_radius=10,
             command=self._save_keys,
         ).pack(fill="x", pady=(14, 4))
@@ -596,7 +596,7 @@ class BestClick(ctk.CTk):
             font=ctk.CTkFont(size=11, weight="bold"),
             fg_color="#0d1117",
             hover_color="#21262d",
-            text_color="#58a6ff",
+            text_color="#4ade80",
             border_width=1, border_color="#30363d",
             corner_radius=8,
             command=lambda k=key_id: self._start_capture(k),
@@ -699,7 +699,7 @@ class BestClick(ctk.CTk):
         btn = self._key_btns[key_id]
         btn.configure(
             text="…",
-            fg_color="#58a6ff", text_color="white", border_color="#58a6ff",
+            fg_color="#4ade80", text_color="white", border_color="#4ade80",
         )
         self._capture_mode = True
         self._capture_cb   = lambda key: self._finish_capture(key_id, key)
@@ -720,7 +720,7 @@ class BestClick(ctk.CTk):
             self.cfg.set(key_id, name)
             self.after(0, lambda: btn.configure(
                 text=name.upper(),
-                fg_color="#0d1117", text_color="#58a6ff", border_color="#30363d",
+                fg_color="#0d1117", text_color="#4ade80", border_color="#30363d",
             ))
             if key_id == "click_key":
                 self.after(0, self._on_type_change)
@@ -728,7 +728,7 @@ class BestClick(ctk.CTk):
             prev = self.cfg.get(key_id, "?")
             self.after(0, lambda: btn.configure(
                 text=prev.upper(),
-                fg_color="#0d1117", text_color="#58a6ff", border_color="#30363d",
+                fg_color="#0d1117", text_color="#4ade80", border_color="#30363d",
             ))
 
     def _save_keys(self) -> None:
