@@ -10,6 +10,7 @@ import threading
 import time
 import json
 import os
+import sys
 import platform
 from pynput.mouse import Button, Controller as MouseController
 from pynput.keyboard import Key, Controller as KeyboardController, Listener as KeyboardListener
@@ -22,8 +23,13 @@ APP_NAME = "BestClick @nummersechs"
 SUBTITLE  = "by @nummersechs  ·  bismillah"
 VERSION   = "1.0.0"
 
+def _resource(name: str) -> str:
+    """Resolve path for both normal (.py) and PyInstaller frozen (.exe) runs."""
+    base = getattr(sys, "_MEIPASS", os.path.dirname(os.path.abspath(__file__)))
+    return os.path.join(base, name)
+
 CONFIG_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "config.json")
-ICON_FILE   = os.path.join(os.path.dirname(os.path.abspath(__file__)), "icon.ico")
+ICON_FILE   = _resource("icon.ico")
 
 DEFAULT_CONFIG: dict = {
     "start_key":  "f6",
@@ -251,25 +257,31 @@ class BestClick(ctk.CTk):
         self.geometry(f"470x720+{(sw-470)//2}+{(sh-720)//2}")
 
     def _apply_icon(self) -> None:
-        if not os.path.exists(ICON_FILE) or platform.system() != "Windows":
+        if not os.path.exists(ICON_FILE):
+            return
+        # Direct Tcl call — bypasses any Python-level override in customtkinter
+        try:
+            self.tk.call('wm', 'iconbitmap', self._w, ICON_FILE)
+        except Exception:
+            pass
+        if platform.system() != "Windows":
             return
         try:
             import ctypes
-            # Load the .ico via Windows API
             hicon = ctypes.windll.user32.LoadImageW(
-                0, ICON_FILE,
-                1,          # IMAGE_ICON
-                0, 0,
-                0x10 | 0x40,  # LR_LOADFROMFILE | LR_DEFAULTSIZE
+                0, ICON_FILE, 1, 0, 0, 0x10 | 0x40,
             )
             if not hicon:
                 return
-            # self.frame() returns the real Win32 HWND as hex — no title search needed
-            hwnd = int(self.frame(), 16)
-            ctypes.windll.user32.SendMessageW(hwnd, 0x0080, 0, hicon)  # WM_SETICON SMALL
-            ctypes.windll.user32.SendMessageW(hwnd, 0x0080, 1, hicon)  # WM_SETICON BIG
-        except Exception as e:
-            print(f"[Icon] {e}")
+            winfo  = self.winfo_id()
+            frame  = int(self.frame(), 16)
+            parent = ctypes.windll.user32.GetParent(winfo)
+            for hwnd in dict.fromkeys([winfo, frame, parent]):
+                if hwnd:
+                    ctypes.windll.user32.SendMessageW(hwnd, 0x0080, 0, hicon)
+                    ctypes.windll.user32.SendMessageW(hwnd, 0x0080, 1, hicon)
+        except Exception:
+            pass
 
     # ── theme switch  (destroys + rebuilds all UI widgets) ────────────────────
 
