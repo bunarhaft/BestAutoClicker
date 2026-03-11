@@ -201,15 +201,8 @@ class Engine:
 class BestClick(ctk.CTk):
 
     def _windows_set_titlebar_icon(self):
-        """
-        customtkinter calls this during __init__ to set its own blue-square icon.
-        We override it to inject our icon at exactly that moment instead.
-        """
-        if os.path.exists(ICON_FILE):
-            try:
-                self.iconbitmap(ICON_FILE)
-            except Exception:
-                pass
+        """Block customtkinter's blue-square icon. Ours is set after init via after()."""
+        pass  # intentionally empty
 
     def __init__(self) -> None:
         # Tell Windows this process has its own identity → correct taskbar icon
@@ -257,6 +250,10 @@ class BestClick(ctk.CTk):
         self.resizable(False, False)
         self.configure(fg_color=self.C["app_bg"])
         self.protocol("WM_DELETE_WINDOW", self._on_close)
+
+        # Set icon after event loop starts (window fully ready at that point)
+        if os.path.exists(ICON_FILE):
+            self.after(0, lambda: self.iconbitmap(ICON_FILE))
 
         # Center on screen
         self.update_idletasks()
