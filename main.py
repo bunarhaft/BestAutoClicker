@@ -21,7 +21,7 @@ from pynput.keyboard import Key, Controller as KeyboardController, Listener as K
 
 APP_NAME = "BestClick @nummersechs"
 SUBTITLE  = "by @nummersechs  ·  bismillah"
-VERSION   = "1.0.0"
+VERSION   = "1.1.0"
 
 def _resource(name: str) -> str:
     """Resolve path for both normal (.py) and PyInstaller frozen (.exe) runs."""
