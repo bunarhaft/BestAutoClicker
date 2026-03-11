@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 BestClick  –  Professional Auto Clicker
-by @nummersechs  ·  bismillah ewa
+by @nummersechs  ·  bismillah ewaaa
 """
 
 import customtkinter as ctk
