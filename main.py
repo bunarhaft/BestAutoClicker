@@ -251,31 +251,25 @@ class BestClick(ctk.CTk):
         self.geometry(f"470x720+{(sw-470)//2}+{(sh-720)//2}")
 
     def _apply_icon(self) -> None:
-        if not os.path.exists(ICON_FILE):
+        if not os.path.exists(ICON_FILE) or platform.system() != "Windows":
             return
-        # tkinter fallback (often overridden by customtkinter, but try anyway)
         try:
-            self.iconbitmap(ICON_FILE)
-        except Exception:
-            pass
-        # Windows API — bypasses tkinter/customtkinter completely
-        if platform.system() == "Windows":
-            try:
-                import ctypes
-                WM_SETICON   = 0x0080
-                IMAGE_ICON   = 1
-                LR_LOADFROMFILE = 0x10
-                LR_DEFAULTSIZE  = 0x40
-                hicon = ctypes.windll.user32.LoadImageW(
-                    None, ICON_FILE, IMAGE_ICON,
-                    0, 0, LR_LOADFROMFILE | LR_DEFAULTSIZE,
-                )
-                if hicon:
-                    hwnd = ctypes.windll.user32.FindWindowW(None, APP_NAME)
-                    ctypes.windll.user32.SendMessageW(hwnd, WM_SETICON, 0, hicon)  # SMALL
-                    ctypes.windll.user32.SendMessageW(hwnd, WM_SETICON, 1, hicon)  # BIG
-            except Exception as e:
-                print(f"[Icon] {e}")
+            import ctypes
+            # Load the .ico via Windows API
+            hicon = ctypes.windll.user32.LoadImageW(
+                0, ICON_FILE,
+                1,          # IMAGE_ICON
+                0, 0,
+                0x10 | 0x40,  # LR_LOADFROMFILE | LR_DEFAULTSIZE
+            )
+            if not hicon:
+                return
+            # self.frame() returns the real Win32 HWND as hex — no title search needed
+            hwnd = int(self.frame(), 16)
+            ctypes.windll.user32.SendMessageW(hwnd, 0x0080, 0, hicon)  # WM_SETICON SMALL
+            ctypes.windll.user32.SendMessageW(hwnd, 0x0080, 1, hicon)  # WM_SETICON BIG
+        except Exception as e:
+            print(f"[Icon] {e}")
 
     # ── theme switch  (destroys + rebuilds all UI widgets) ────────────────────
 
