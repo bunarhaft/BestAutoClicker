@@ -231,12 +231,9 @@ class BestClick(ctk.CTk):
         self.configure(fg_color=self.C["app_bg"])
         self.protocol("WM_DELETE_WINDOW", self._on_close)
 
-        # App icon
-        try:
-            if os.path.exists(ICON_FILE):
-                self.iconbitmap(ICON_FILE)
-        except Exception:
-            pass
+        # App icon — deferred so tkinter doesn't override it after init
+        if os.path.exists(ICON_FILE):
+            self.after(0, lambda: self.iconbitmap(ICON_FILE))
 
         # Center on screen
         self.update_idletasks()
