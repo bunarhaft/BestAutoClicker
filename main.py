@@ -18,7 +18,7 @@ from pynput.keyboard import Key, Controller as KeyboardController, Listener as K
 # App constants
 # ──────────────────────────────────────────────────────────────────────────────
 
-APP_NAME = "BestClick"
+APP_NAME = "BestClick @nummersechs"
 SUBTITLE  = "by @nummersechs  ·  bismillah"
 VERSION   = "1.0.0"
 
@@ -407,7 +407,7 @@ class BestClick(ctk.CTk):
             ("⌨   Key Press",   "key"),
         ]
         grid = ctk.CTkFrame(type_card, fg_color="transparent")
-        grid.pack(fill="x", padx=12, pady=10)
+        grid.pack(pady=10)
         for i, (lbl, val) in enumerate(opts):
             ctk.CTkRadioButton(
                 grid,
