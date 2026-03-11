@@ -251,9 +251,9 @@ class BestClick(ctk.CTk):
         self.configure(fg_color=self.C["app_bg"])
         self.protocol("WM_DELETE_WINDOW", self._on_close)
 
-        # Set icon after event loop starts (window fully ready at that point)
+        # Bypass customtkinter's iconbitmap override via raw Tcl call
         if os.path.exists(ICON_FILE):
-            self.after(0, lambda: self.iconbitmap(ICON_FILE))
+            self.after(0, lambda: self.tk.call('wm', 'iconbitmap', self._w, ICON_FILE))
 
         # Center on screen
         self.update_idletasks()
