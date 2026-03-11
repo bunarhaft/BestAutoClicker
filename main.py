@@ -200,6 +200,17 @@ class Engine:
 
 class BestClick(ctk.CTk):
 
+    def _windows_set_titlebar_icon(self):
+        """
+        customtkinter calls this during __init__ to set its own blue-square icon.
+        We override it to inject our icon at exactly that moment instead.
+        """
+        if os.path.exists(ICON_FILE):
+            try:
+                self.iconbitmap(ICON_FILE)
+            except Exception:
+                pass
+
     def __init__(self) -> None:
         # Tell Windows this process has its own identity → correct taskbar icon
         if platform.system() == "Windows":
@@ -211,7 +222,7 @@ class BestClick(ctk.CTk):
             except Exception:
                 pass
 
-        super().__init__()
+        super().__init__()  # _windows_set_titlebar_icon() is called inside here
 
         self.cfg          = Config()
         self._theme_name  = self.cfg.get("theme", "dark")
@@ -247,41 +258,10 @@ class BestClick(ctk.CTk):
         self.configure(fg_color=self.C["app_bg"])
         self.protocol("WM_DELETE_WINDOW", self._on_close)
 
-        # App icon — must be deferred; customtkinter overrides icons set during __init__
-        if os.path.exists(ICON_FILE):
-            self.after(250, self._apply_icon)
-
         # Center on screen
         self.update_idletasks()
         sw, sh = self.winfo_screenwidth(), self.winfo_screenheight()
         self.geometry(f"470x720+{(sw-470)//2}+{(sh-720)//2}")
-
-    def _apply_icon(self) -> None:
-        if not os.path.exists(ICON_FILE):
-            return
-        # Direct Tcl call — bypasses any Python-level override in customtkinter
-        try:
-            self.tk.call('wm', 'iconbitmap', self._w, ICON_FILE)
-        except Exception:
-            pass
-        if platform.system() != "Windows":
-            return
-        try:
-            import ctypes
-            hicon = ctypes.windll.user32.LoadImageW(
-                0, ICON_FILE, 1, 0, 0, 0x10 | 0x40,
-            )
-            if not hicon:
-                return
-            winfo  = self.winfo_id()
-            frame  = int(self.frame(), 16)
-            parent = ctypes.windll.user32.GetParent(winfo)
-            for hwnd in dict.fromkeys([winfo, frame, parent]):
-                if hwnd:
-                    ctypes.windll.user32.SendMessageW(hwnd, 0x0080, 0, hicon)
-                    ctypes.windll.user32.SendMessageW(hwnd, 0x0080, 1, hicon)
-        except Exception:
-            pass
 
     # ── theme switch  (destroys + rebuilds all UI widgets) ────────────────────
 
